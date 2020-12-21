@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Util
+ *
  * @author lww
  */
 public class HttpResult<T> {

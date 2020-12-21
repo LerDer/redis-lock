@@ -20,6 +20,7 @@ import top.lww0511.redislock.util.RedisKey;
 import top.lww0511.redislock.util.RedisUtil;
 
 /**
+ * AOP handle repeat request
  * @author lww
  * @date 2020-12-21 11:31 AM
  */
