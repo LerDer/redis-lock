@@ -21,6 +21,7 @@ import top.lww0511.redislock.util.RedisUtil;
 
 /**
  * AOP handle repeat request
+ *
  * @author lww
  * @date 2020-12-21 11:31 AM
  */
@@ -44,14 +45,15 @@ public class RepeatRequestAspect {
         HttpServletRequest request = HttpContextUtils.getHttpServletRequest();
         String ipAddr = IPUtils.getIpAddr(request);
         String servletPath = request.getServletPath();
-        //log.info("RepeatRequestAspect_around_ipAddr:{}, servletPath:{}", ipAddr, servletPath);
 
         Method method = ((MethodSignature) point.getSignature()).getMethod();
         Lock lock = method.getAnnotation(Lock.class);
-        String lockKey = RedisKey.REQUEST_PREFIX + ipAddr + "_" + servletPath;
         int lockTime = lock.value();
-        lockKey = StringUtils.isEmpty(lock.name()) ? lockKey : lock.name() + "_" + ipAddr;
-        log.info("RepeatRequestAspect_around_lockTime:{}, lockKey:{}", lockTime, lockKey);
+        boolean hard = lock.hard();
+        boolean distributed = lock.distributed();
+        String lockKey = RedisKey.REQUEST_PREFIX + servletPath + (distributed ? "" : ("_" + ipAddr));
+        lockKey = StringUtils.isEmpty(lock.name()) ? lockKey : RedisKey.REQUEST_PREFIX + lock.name() + (distributed ? "" : ("_" + ipAddr));
+        log.info("RepeatRequestAspect_around_lockTime:{}, hard:{}, lockKey:{}", lockTime, hard, lockKey);
         String value = redisUtil.getValue(lockKey);
         if (!StringUtils.isEmpty(value)) {
             Assert.isTrue(false, "操作太频繁了，请休息一会再操作！");
@@ -63,7 +65,9 @@ public class RepeatRequestAspect {
         } catch (Throwable throwable) {
             log.error("RepeatRequestAspect_around_throwable:{}", throwable);
         } finally {
-            redisUtil.remove(lockKey);
+            if (!hard) {
+                redisUtil.remove(lockKey);
+            }
         }
         return proceed;
     }
