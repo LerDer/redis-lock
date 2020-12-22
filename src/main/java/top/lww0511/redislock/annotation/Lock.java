@@ -36,7 +36,7 @@ public @interface Lock {
     /**
      * @return 是否是分布式锁
      * true 分布式锁 所有用户同一把锁，即key相同
-     * false 防止单个用户重复提交(提交过快 ， 如点击按钮太快)
+     * false 每个用户锁不同，防止单个用户重复提交(提交过快 ， 如点击按钮太快)
      */
     boolean distributed() default true;
 }
