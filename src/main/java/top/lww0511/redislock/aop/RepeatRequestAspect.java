@@ -63,7 +63,11 @@ public class RepeatRequestAspect {
         try {
             proceed = point.proceed();
         } catch (Throwable throwable) {
-            log.error("RepeatRequestAspect_around_throwable:{}", throwable);
+            if (throwable instanceof IllegalArgumentException) {
+                throw new IllegalArgumentException(throwable.getMessage());
+            } else {
+                log.error("RepeatRequestAspect_around_throwable:{}", throwable);
+            }
         } finally {
             if (!hard) {
                 redisUtil.remove(lockKey);
