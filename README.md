@@ -18,7 +18,7 @@ spring.redis.database=0
 <dependency>
     <groupId>top.lww0511</groupId>
     <artifactId>redis-lock</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
 </dependency>
 ```
 
@@ -54,7 +54,7 @@ public HttpResult hello() {
 
 ### 最后
 
-其中还有一些工具类，全局异常拦截器等等，还有`META-INF/spring.factories`。
+其中还有一些工具类，全局异常拦截器等等，还有`META-INF/spring.factories`。（全局异常拦截器已删除，自己配置更灵活）
 
 
 这个已经发布到`Maven`中心仓库了，所以直接添加依赖就可以使用了。不需要自己打包发布到私服。
