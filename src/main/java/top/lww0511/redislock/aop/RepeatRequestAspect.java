@@ -10,6 +10,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -28,6 +29,7 @@ import top.lww0511.redislock.util.RedisUtil;
 @Slf4j
 @Aspect
 @Component
+@ComponentScan(basePackages = "top.lww0511")
 public class RepeatRequestAspect {
 
     @Resource
@@ -41,7 +43,7 @@ public class RepeatRequestAspect {
     }
 
     @Around("pointcut()")
-    public Object around(ProceedingJoinPoint point) {
+    public Object around(ProceedingJoinPoint point) throws Throwable {
         HttpServletRequest request = HttpContextUtils.getHttpServletRequest();
         String ipAddr = IPUtils.getIpAddr(request);
         String servletPath = request.getServletPath();
@@ -59,15 +61,9 @@ public class RepeatRequestAspect {
             Assert.isTrue(false, "操作太频繁了，请休息一会再操作！");
         }
         redisUtil.setValue(lockKey, lockKey, lockTime, TimeUnit.SECONDS);
-        Object proceed = null;
+        Object proceed;
         try {
             proceed = point.proceed();
-        } catch (Throwable throwable) {
-            if (throwable instanceof IllegalArgumentException) {
-                throw new IllegalArgumentException(throwable.getMessage());
-            } else {
-                log.error("RepeatRequestAspect_around_throwable:{}", throwable);
-            }
         } finally {
             if (!hard) {
                 redisUtil.remove(lockKey);

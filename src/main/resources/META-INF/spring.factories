@@ -1,1 +1,1 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=top.lww0511.redislock.config.DefaultGlobalExceptionHandler
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=top.lww0511.redislock.aop.RepeatRequestAspect
