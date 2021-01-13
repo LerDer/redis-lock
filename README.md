@@ -67,7 +67,7 @@ public HttpResult hello() {
 <dependency>
     <groupId>top.lww0511</groupId>
     <artifactId>redis-lock</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
 </dependency>
 ```
 
