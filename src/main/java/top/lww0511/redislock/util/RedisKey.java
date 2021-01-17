@@ -13,4 +13,7 @@ public interface RedisKey {
      * 前缀
      */
     String REQUEST_PREFIX = "REQUEST_PREFIX_";
+
+    String CACHE_IN_REDIS = "CACHE_IN_REDIS_";
+
 }
