@@ -2,6 +2,7 @@ package top.lww0511.redislock.aop;
 
 import com.alibaba.fastjson.JSONObject;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +43,14 @@ public class CacheAspect {
         Method method = ((MethodSignature) point.getSignature()).getMethod();
         Cache cache = method.getAnnotation(Cache.class);
         int catchTime = cache.value();
-        String cacheKey = RedisKey.CACHE_IN_REDIS + method.getDeclaringClass().getName() + "." + method.getName();
+        Object[] args = point.getArgs();
+        Parameter[] parameters = method.getParameters();
+        StringBuilder params = new StringBuilder();
+        params.append("_");
+        for (int i = 0; i < args.length; i++) {
+            params.append(parameters[i].getName()).append(args[i]);
+        }
+        String cacheKey = RedisKey.CACHE_IN_REDIS + method.getDeclaringClass().getName() + "." + method.getName() + params;
         log.info("CacheAspect_around_catchTime:{}, cacheKey:{}", catchTime, cacheKey);
         String value = redisUtil.getValue(cacheKey);
         if (StringUtils.isEmpty(value)) {
