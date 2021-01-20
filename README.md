@@ -18,7 +18,7 @@ spring.redis.database=0
 <dependency>
     <groupId>top.lww0511</groupId>
     <artifactId>redis-lock</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.4</version>
 </dependency>
 ```
 
@@ -67,9 +67,31 @@ public HttpResult hello() {
 <dependency>
     <groupId>top.lww0511</groupId>
     <artifactId>redis-lock</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.4</version>
 </dependency>
 ```
+
+### 修改
+
+版本改为 `1.0.4`
+
+新增了缓存功能，基于 AOP + Redis 实现缓存方法结果。
+
+### 使用方式
+
+在方法上添加注解`@Cache`，默认 `value = 1`，单位是分钟，可使用下面方式自定义时间单位
+
+`@Cache(value = 10, unit = TimeUnit.HOURS)`
+
+### 效果
+
+1. 如果参数是普通的参数
+
+缓存`key`为：`cacheKey:CACHE_IN_REDIS_com.ler.demo.controller.HelloController.hello_namehahah`
+
+2. 如果参数是使用 `@RequestBody` 注解
+
+缓存`key`为：`cacheKey:CACHE_IN_REDIS_com.ler.demo.controller.HelloController.hello1_userUser(name=demoData)`
 
 
 欢迎大家关注我的公众号，共同学习，一起进步。加油🤣
