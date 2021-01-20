@@ -44,15 +44,20 @@ public class CacheAspect {
         Cache cache = method.getAnnotation(Cache.class);
         int catchTime = cache.value();
         TimeUnit unit = cache.unit();
+        boolean hash = cache.hash();
         Object[] args = point.getArgs();
         Parameter[] parameters = method.getParameters();
+        //组成唯一key
         StringBuilder params = new StringBuilder();
-        params.append("_");
         for (int i = 0; i < args.length; i++) {
-            params.append(parameters[i].getName()).append(args[i]);
+            params.append(parameters[i].getName()).append("=").append(args[i]);
+            if (i != args.length - 1) {
+                params.append("&");
+            }
         }
-        String cacheKey = RedisKey.CACHE_IN_REDIS + method.getDeclaringClass().getName() + "." + method.getName() + params;
+        String cacheKey = RedisKey.CACHE_IN_REDIS + method.getDeclaringClass().getName() + "." + method.getName() + "?" + (hash ? params.hashCode() : params);
         log.info("CacheAspect_around_catchTime:{}, cacheKey:{}", catchTime, cacheKey);
+        //从Redis中取
         String value = redisUtil.getValue(cacheKey);
         if (StringUtils.isEmpty(value)) {
             Object proceed = point.proceed();
