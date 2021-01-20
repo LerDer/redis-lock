@@ -29,4 +29,8 @@ public @interface Cache {
      */
     TimeUnit unit() default TimeUnit.MINUTES;
 
+    /**
+     * @return true 在日志中使用hashcode来记录，否则使用字符串的方式，主要是为了安全
+     */
+    boolean hash() default true;
 }
