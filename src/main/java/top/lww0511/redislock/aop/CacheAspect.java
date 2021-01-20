@@ -55,7 +55,7 @@ public class CacheAspect {
                 params.append("&");
             }
         }
-        String cacheKey = RedisKey.CACHE_IN_REDIS + method.getDeclaringClass().getName() + "." + method.getName() + "?" + (hash ? params.hashCode() : params);
+        String cacheKey = RedisKey.CACHE_IN_REDIS + method.getDeclaringClass().getName() + "." + method.getName() + "?" + (hash ? params.toString().hashCode() : params);
         log.info("CacheAspect_around_catchTime:{}, cacheKey:{}", catchTime, cacheKey);
         //从Redis中取
         String value = redisUtil.getValue(cacheKey);
