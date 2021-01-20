@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 public @interface Cache {
 
     /**
-     * @return 锁定时间，默认1分钟
+     * @return 缓存时间，默认1分钟
      */
     int value() default 1;
 
