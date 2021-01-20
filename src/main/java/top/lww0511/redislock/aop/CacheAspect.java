@@ -43,6 +43,7 @@ public class CacheAspect {
         Method method = ((MethodSignature) point.getSignature()).getMethod();
         Cache cache = method.getAnnotation(Cache.class);
         int catchTime = cache.value();
+        TimeUnit unit = cache.unit();
         Object[] args = point.getArgs();
         Parameter[] parameters = method.getParameters();
         StringBuilder params = new StringBuilder();
@@ -55,7 +56,7 @@ public class CacheAspect {
         String value = redisUtil.getValue(cacheKey);
         if (StringUtils.isEmpty(value)) {
             Object proceed = point.proceed();
-            redisUtil.setValue(cacheKey, JSONObject.toJSONString(proceed), catchTime, TimeUnit.MINUTES);
+            redisUtil.setValue(cacheKey, JSONObject.toJSONString(proceed), catchTime, unit);
             return proceed;
         } else {
             Class<?> returnType = method.getReturnType();
