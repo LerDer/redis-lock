@@ -93,6 +93,38 @@ public HttpResult hello() {
 
 缓存`key`为：`cacheKey:CACHE_IN_REDIS_com.ler.demo.controller.HelloController.hello1_userUser(name=demoData)`
 
+### 修改
+
+由于修改为在`Redis`中使用`Hash`格式存储接口返回数据
+
+所以`Cache`注解只保留了一个属性
+
+```java
+/**
+ * @return true 在日志中使用hashcode来记录，
+ * 否则使用字符串的方式，主要是为了安全
+ */
+boolean value() default true;
+```
+
+#### 增加了`Change`注解
+
+```java
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Inherited
+public @interface Change {
+
+    /**
+     * @return 缓存产生的类的全限定名，多个用逗号(,)分隔，
+     * 不设置 则为当前方法所在的类的全限定名
+     */
+    String value() default "";
+}
+```
+
+在会造成数据库数据发生改变的接口上添加此注解，可以删除`Redis`中查询方法的返回结果。保证数据一致性
 
 欢迎大家关注我的公众号，共同学习，一起进步。加油🤣
 
