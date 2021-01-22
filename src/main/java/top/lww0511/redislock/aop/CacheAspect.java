@@ -12,7 +12,6 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import top.lww0511.redislock.annotation.Cache;
 import top.lww0511.redislock.util.RedisKey;
 import top.lww0511.redislock.util.RedisUtil;
@@ -55,17 +54,18 @@ public class CacheAspect {
                 params.append("&");
             }
         }
-        String cacheKey = RedisKey.CACHE_IN_REDIS + method.getDeclaringClass().getName() + "." + method.getName() + "?" + (hash ? params.toString().hashCode() : params);
+        String className = RedisKey.CACHE_IN_REDIS + method.getDeclaringClass().getName();
+        String cacheKey = className + "." + method.getName() + "?" + (hash ? params.toString().hashCode() : params);
         log.info("CacheAspect_around_catchTime:{}, cacheKey:{}", catchTime, cacheKey);
         //从Redis中取
-        String value = redisUtil.getValue(cacheKey);
-        if (StringUtils.isEmpty(value)) {
+        Object value = redisUtil.getHashValue(className, cacheKey);
+        if (value == null) {
             Object proceed = point.proceed();
-            redisUtil.setValue(cacheKey, JSONObject.toJSONString(proceed), catchTime, unit);
+            redisUtil.setHashValue(className, cacheKey, JSONObject.toJSONString(proceed));
             return proceed;
         } else {
             Class<?> returnType = method.getReturnType();
-            return JSONObject.parseObject(value, returnType);
+            return JSONObject.parseObject(value.toString(), returnType);
         }
     }
 
