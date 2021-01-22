@@ -3,7 +3,6 @@ package top.lww0511.redislock.aop;
 import com.alibaba.fastjson.JSONObject;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.concurrent.TimeUnit;
 import javax.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -41,9 +40,7 @@ public class CacheAspect {
     public Object around(ProceedingJoinPoint point) throws Throwable {
         Method method = ((MethodSignature) point.getSignature()).getMethod();
         Cache cache = method.getAnnotation(Cache.class);
-        int catchTime = cache.value();
-        TimeUnit unit = cache.unit();
-        boolean hash = cache.hash();
+        boolean hash = cache.value();
         Object[] args = point.getArgs();
         Parameter[] parameters = method.getParameters();
         //组成唯一key
@@ -56,7 +53,7 @@ public class CacheAspect {
         }
         String className = RedisKey.CACHE_IN_REDIS + method.getDeclaringClass().getName();
         String cacheKey = className + "." + method.getName() + "?" + (hash ? params.toString().hashCode() : params);
-        log.info("CacheAspect_around_catchTime:{}, cacheKey:{}", catchTime, cacheKey);
+        log.info("CacheAspect_around_cacheKey:{}", cacheKey);
         //从Redis中取
         Object value = redisUtil.getHashValue(className, cacheKey);
         if (value == null) {
