@@ -11,7 +11,7 @@
     </parent>
     <groupId>top.lww0511</groupId>
     <artifactId>redis-lock</artifactId>
-    <version>1.0.6</version>
+    <version>1.0.7</version>
     <name>${project.groupId}:${project.artifactId}</name>
     <url>https://github.com/LerDer/redis-lock</url>
     <description>This is a Java Project that can prevent repeat http request. With Annotation and AOP,  it is very easy and no invade.</description>
