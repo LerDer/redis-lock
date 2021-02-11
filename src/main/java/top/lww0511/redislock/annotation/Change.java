@@ -20,5 +20,5 @@ public @interface Change {
      * @return 缓存产生的类的全限定名，多个用逗号(,)分隔，
      * 不设置 则为当前方法所在的类的全限定名
      */
-    String value() default "";
+    String[] value() default "";
 }

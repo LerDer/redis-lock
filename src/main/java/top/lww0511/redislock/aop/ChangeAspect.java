@@ -40,13 +40,13 @@ public class ChangeAspect {
     public Object around(ProceedingJoinPoint point) throws Throwable {
         Method method = ((MethodSignature) point.getSignature()).getMethod();
         Change change = method.getAnnotation(Change.class);
-        String className = change.value();
-        if (StringUtils.isEmpty(className)) {
-            className = RedisKey.CACHE_IN_REDIS + method.getDeclaringClass().getName();
+        String[] value = change.value();
+        if (value.length <= 0) {
+            String className = RedisKey.CACHE_IN_REDIS + method.getDeclaringClass().getName();
             redisUtil.deleteHashValueByScan(className);
         } else {
-            List<String> keys = Arrays.asList(className.split(","));
-            keys.forEach(e -> redisUtil.deleteHashValueByScan(RedisKey.CACHE_IN_REDIS + e));
+            List<String> keys = Arrays.asList(value);
+            keys.forEach(e -> redisUtil.deleteHashValueByScan(RedisKey.CACHE_IN_REDIS + e.trim()));
         }
         return point.proceed();
     }
